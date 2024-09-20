@@ -10,7 +10,7 @@ RUN chmod +x /helx/helx-init.sh
 RUN groupadd cloudbeaver
 RUN useradd -ms /bin/sh -g 0 cloudbeaver
 RUN usermod -aG 0 cloudbeaver
-# RUN chown root:cloudbeaver /etc/passwd
+
 RUN chmod g+w /etc/passwd && chmod g+w /etc/group
 RUN chown -R cloudbeaver ./ /home /helx /opt/cloudbeaver
 
