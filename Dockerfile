@@ -7,12 +7,17 @@ ARG BUILD_IMAGE
 COPY helx /helx
 RUN chmod +x /helx/helx-init.sh
 
-RUN groupadd cloudbeaver 
-RUN useradd -ms /bin/bash -g cloudbeaver cloudbeaver 
-RUN chown -R cloudbeaver ./ /helx /opt/cloudbeaver 
+RUN groupadd cloudbeaver
+RUN useradd -ms /bin/sh -g 0 cloudbeaver
+RUN usermod -aG 0 cloudbeaver
+# RUN chown root:cloudbeaver /etc/passwd
+RUN chmod g+w /etc/passwd && chmod g+w /etc/group
+RUN chown -R cloudbeaver ./ /home /helx /opt/cloudbeaver
 
-USER cloudbeaver 
+USER cloudbeaver
+ENV NB_USER=joshua-seals
 WORKDIR /helx
+
 ENTRYPOINT [ "./helx-init.sh" ]
 
 LABEL org.opencontainers.image.created="${BUILD_DATE}" \

@@ -1,2 +1,0 @@
-Add scripts with numberic names in order to be read sequentially by helx-init.sh
-This file is a junk placeholder
