@@ -24,11 +24,15 @@ INIT_SCRIPTS_TO_RUN=$(ls -1 "$HELX_SCRIPTS_DIR"/*.sh 2>/dev/null) || true
 for INIT_SCRIPT in $INIT_SCRIPTS_TO_RUN
 do
   echo "Running $INIT_SCRIPT"
-  chmod +x "$INIT_SCRIPT"
   "$INIT_SCRIPT"
 done
 # Run the cloudbeaver app after HeLx is setup
 cd "$WORKDIR"
-chmod +x run-server.sh
-
+# chmod +x run-server.sh
+# NB_PREFIX has no trailing slash; do NOT add one. A trailing slash makes the
+# runtime conf's serviceURI ("${CLOUDBEAVER_ROOT_URI:/api/}/api/") resolve to
+# "<prefix>//api/" (double slash), so the GraphQL/WebSocket servlets mount at a
+# path that single-slash requests don't match -> 405/404. It also makes Jetty
+# warn "contextPath ends with /".
+export CLOUDBEAVER_ROOT_URI="$NB_PREFIX"
 ./run-server.sh
