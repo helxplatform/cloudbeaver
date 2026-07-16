@@ -1,21 +1,28 @@
 # https://github.com/dbeaver/cloudbeaver/wiki/Run-Docker-Container
+
+# https://github.com/dbeaver/cloudbeaver/wiki/Server-configuration#automatic-server-configuration
 FROM dbeaver/cloudbeaver:latest 
 
 ARG BUILD_DATE
 ARG BUILD_IMAGE
 
 COPY helx /helx
-RUN chmod +x /helx/helx-init.sh
+RUN find /helx -type f -exec chmod +x {} +
 
 RUN groupadd cloudbeaver
 RUN useradd -ms /bin/sh -g 0 cloudbeaver
 RUN usermod -aG 0 cloudbeaver
 
-RUN chmod g+w /etc/passwd && chmod g+w /etc/group
+RUN chmod g+w /etc/passwd /etc/group /etc/environment
 RUN chown -R cloudbeaver ./ /home /helx /opt/cloudbeaver
+# Allows HeLx to proxy the app
+ENV CLOUDBEAVER_APP_FORWARD_PROXY=true
 
 USER cloudbeaver
 ENV NB_USER=joshua-seals
+ENV CB_ADMIN_NAME="cbadmin"
+ENV CB_ADMIN_PASSWORD="P@55word123"
+
 WORKDIR /helx
 
 ENTRYPOINT [ "./helx-init.sh" ]

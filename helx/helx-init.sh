@@ -28,11 +28,16 @@ do
 done
 # Run the cloudbeaver app after HeLx is setup
 cd "$WORKDIR"
-# chmod +x run-server.sh
 # NB_PREFIX has no trailing slash; do NOT add one. A trailing slash makes the
 # runtime conf's serviceURI ("${CLOUDBEAVER_ROOT_URI:/api/}/api/") resolve to
 # "<prefix>//api/" (double slash), so the GraphQL/WebSocket servlets mount at a
 # path that single-slash requests don't match -> 405/404. It also makes Jetty
 # warn "contextPath ends with /".
 export CLOUDBEAVER_ROOT_URI="$NB_PREFIX"
-./run-server.sh
+# Newer CloudBeaver renamed the launcher and added launch-product.sh, which
+# (when run as root) su's to the 'dbeaver' user. HeLx runs the container as
+# root and chowns /opt/cloudbeaver to 'cloudbeaver', so the su'd 'dbeaver'
+# user can't write the OSGi config area -> "Unable to create lock manager".
+# Call the inner launcher directly so it runs as root (as the old run-server.sh
+# did) and can write its config/workspace.
+./run-cloudbeaver-server.sh
